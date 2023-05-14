@@ -5,11 +5,21 @@ using UnityEngine.UI;
 
 public class WindowGraph : MonoBehaviour
 {
+    public static WindowGraph instance;
+
+    void Awake(){
+        if(instance != null){
+            Debug.LogWarning("Instance freak up!");
+            return;
+        }
+        instance = this;
+    }
+    
     [SerializeField]private Sprite circleSprite;
     private RectTransform graphContainer;
     float xPosition = 0f, yPosition = 0f, yMaximum = 0f, xMaximum = 0f, graphHeight, graphWidth; 
 
-    private void Awake(){
+    void Start(){
         graphContainer = transform.Find("GraphContainer").GetComponent<RectTransform>();
 
         List<int> valList =  new List<int>(){0, 0, 0, 0, 0, 0, 0, 0, 15, 100};

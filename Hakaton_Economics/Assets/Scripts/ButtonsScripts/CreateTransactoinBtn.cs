@@ -17,9 +17,15 @@ public class CreateTransactoinBtn : MonoBehaviour
     [SerializeField]Button m_Button;
     [HideInInspector]public TransactionScriptableObject trnsSO;
 
+    TransactionManager transManager;
+
     void Awake(){
         Button btn = m_Button.GetComponent<Button>();
         btn.onClick.AddListener(OnClick);
+    }
+
+    void Start(){
+        transManager = TransactionManager.instance;
     }
 
     void OnClick(){
@@ -36,6 +42,8 @@ public class CreateTransactoinBtn : MonoBehaviour
         trnsSO.nameOfTrans = nameField.text;
         trnsSO.summOfTrans = float.Parse(amountOfMoneyField.text, CultureInfo.InvariantCulture);
         TransactionTime();
+
+        transManager.AddTransaction(trnsSO);
     }
 
     void TransactionTime(){
