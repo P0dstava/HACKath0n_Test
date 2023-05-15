@@ -15,6 +15,9 @@ public class TransactionManager : MonoBehaviour
     [SerializeField]TextMeshProUGUI cashText;
     [HideInInspector]public List<TransactionScriptableObject> transactions, m_TransactionsList, p_TransactionsList;
     [SerializeField]GameObject transPrefab, transListObj;
+
+    GameObject prevTransPrefab;
+    Transform prevTransPrefabTrans;
     float prefabOffsetY = 166f;
 
     public string typeOfSorting = "date";
@@ -33,6 +36,9 @@ public class TransactionManager : MonoBehaviour
         
         m_TransactionsList = new List<TransactionScriptableObject>();
         p_TransactionsList = new List<TransactionScriptableObject>();
+
+        prevTransPrefab = new GameObject();
+        prevTransPrefabTrans = prevTransPrefab.GetComponent<Transform>();
     }
 
     void Start(){
@@ -47,27 +53,45 @@ public class TransactionManager : MonoBehaviour
     }
 
     void ShowIncome(){
-        if(p_TransactionsList.Count > 0){
+        /*if(p_TransactionsList.Count > 0){
             for(int i = 0; i < transactions.Count; i++){
                 Debug.Log(p_TransactionsList[i].nameOfTrans);
-                GenerateList(p_TransactionsList);
             }
-        }
+        }*/
+        GenerateList(p_TransactionsList);
     }
 
     void ShowSpendings(){
-        if(m_TransactionsList.Count > 0){
+        /*if(m_TransactionsList.Count > 0){
             for(int i = 0; i < transactions.Count; i++){
                 Debug.Log(m_TransactionsList[i].nameOfTrans);
-                GenerateList(m_TransactionsList);
             }
-        }
+        }*/
+        GenerateList(m_TransactionsList);
     }
 
     //Function called from outside to add a new transaction to a list
     public void AddTransaction(TransactionScriptableObject m_Transaction){
         transactions.Add(m_Transaction);
         AssignTransaction(m_Transaction);
+        ChangeCashAmount(m_Transaction);
+    }
+    
+    //Function called from outside to add a new transaction to a list
+    public void RemoveTransaction(TransactionScriptableObject m_Transaction){
+        transactions.Remove(m_Transaction);
+
+        if(m_Transaction.summOfTrans > 0f){
+            p_TransactionsList.Remove(m_Transaction);
+            GenerateList(p_TransactionsList);
+        }
+
+        else if(m_Transaction.summOfTrans < 0f){
+            m_TransactionsList.Remove(m_Transaction);
+            GenerateList(m_TransactionsList);
+        }
+
+        m_Transaction.summOfTrans = -m_Transaction.summOfTrans;
         ChangeCashAmount(m_Transaction);
     }
 
@@ -91,12 +115,49 @@ public class TransactionManager : MonoBehaviour
     //Generating a list of prefabs
     void GenerateList(List<TransactionScriptableObject> transList){
         DeleteAllChildren(transListObj.transform);
-        for(int i = 0; i < transList.Count; i++){
-            GameObject newTransPrefab = Instantiate(transPrefab);
-            newTransPrefab.transform.SetParent(transListObj.transform);
-            newTransPrefab.transform.position = new Vector2(transListObj.transform.position.x, transListObj.transform.position.y - prefabOffsetY * i);
-            /*newTransPrefab.Find("DateText").text = transList[i].nameOfTrans;
-            newTransPrefab.Find(DateText).text = transList[i].nameOfTrans;*/
+        if(transList.Count != 0){
+            for(int i = 0; i < transList.Count; i++){
+                GameObject newTransPrefab = Instantiate(transPrefab);
+                Transform newTransPrefabTrans = newTransPrefab.GetComponent<Transform>();
+                newTransPrefabTrans.GetComponent<TransPrefabScript>().curTransaction = transList[i];
+
+                TextMeshProUGUI newTransPrefabName = newTransPrefabTrans.Find("TransName").GetComponent<TextMeshProUGUI>();
+                TextMeshProUGUI newTransPrefabSumm = newTransPrefabTrans.Find("TransSumm").GetComponent<TextMeshProUGUI>();
+                TextMeshProUGUI newTransPrefabDate = newTransPrefabTrans.Find("TransDate").GetComponent<TextMeshProUGUI>();
+                TextMeshProUGUI newTransPrefabTime = newTransPrefabTrans.Find("TransTime").GetComponent<TextMeshProUGUI>();
+
+                TextMeshProUGUI prevTransPrefabDate = newTransPrefabTrans.Find("TransDate").GetComponent<TextMeshProUGUI>();
+                TextMeshProUGUI prevTransPrefabTime = newTransPrefabTrans.Find("TransTime").GetComponent<TextMeshProUGUI>();
+            
+                newTransPrefabTrans.SetParent(transListObj.transform);
+
+                newTransPrefabName.text = transList[i].nameOfTrans;
+                newTransPrefabSumm.text = transList[i].summOfTrans.ToString("0.00");
+                newTransPrefabTime.text = transList[i].hour.ToString()+":"+transList[i].minute.ToString();
+
+                if(prevTransPrefabTrans != newTransPrefabTrans){
+                    string dateText = transList[i].year.ToString()+"."+transList[i].month.ToString()+"."+transList[i].day.ToString();
+
+                    //if(newTransPrefabDate.text == prevTransPrefabDate.text){
+                        newTransPrefabDate.text = dateText;
+                        //prevTransPrefabDate.text = "";
+                    //}
+                    newTransPrefabTrans.position = new Vector2(transListObj.transform.position.x, transListObj.transform.position.y /*- prefabOffsetY*/);
+                    prevTransPrefabTrans.position = new Vector2(transListObj.transform.position.x, transListObj.transform.position.y - prefabOffsetY * (transList.Count - i));
+
+                    prevTransPrefabTrans = newTransPrefabTrans;
+                }
+
+
+                /*else if(prevTransPrefabTrans == newTransPrefabTrans){
+                    Debug.Log("фівфівфівф New: " + newTransPrefabTrans.position.y + " Prev:" + prevTransPrefabTrans.position.y);
+                    string dateText = transList[i].year.ToString()+"."+transList[i].month.ToString()+"."+transList[i].day.ToString();
+                    prevTransPrefabDate.text = dateText;
+                    newTransPrefabDate.text = dateText;
+                    newTransPrefabTrans.position = new Vector2(transListObj.transform.position.x, transListObj.transform.position.y - prefabOffsetY);
+                }*/
+                /*newTransPrefab.Find(DateText).text = transList[i].nameOfTrans;*/
+            }
         }
     }
 
@@ -109,6 +170,10 @@ public class TransactionManager : MonoBehaviour
             Transform child = parent.GetChild(i);
             Destroy(child.gameObject);
         }
+        
+        prevTransPrefab = new GameObject();
+        prevTransPrefabTrans = prevTransPrefab.GetComponent<Transform>();
+        prevTransPrefabTrans.SetParent(transListObj.transform);
     }
 
     void SortTransactions(string typeOfSorting){
