@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1214630fbfbe9b74ab1cf7bbfbdae8ac, type: 3}
-  m_Name: 10122000
+  m_Name: -12
   m_EditorClassIdentifier: 
-  nameOfTrans: 10122000
+  nameOfTrans: -12
   tagOfTrans: 
-  summOfTrans: 0.05
-  year: 2000
+  summOfTrans: -12
+  year: 12
   month: 12
-  day: 10
+  day: 12
   hour: 12
   minute: 12
