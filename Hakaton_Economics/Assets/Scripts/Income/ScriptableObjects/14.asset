@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1214630fbfbe9b74ab1cf7bbfbdae8ac, type: 3}
-  m_Name: 13
+  m_Name: 14
   m_EditorClassIdentifier: 
-  nameOfTrans: 13
+  nameOfTrans: 14
   tagOfTrans: 
-  summOfTrans: 1400
+  summOfTrans: 400000
   year: 12
   month: 12
   day: 12

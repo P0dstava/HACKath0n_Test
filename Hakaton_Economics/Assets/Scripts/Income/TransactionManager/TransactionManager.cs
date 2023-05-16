@@ -9,7 +9,9 @@ public class TransactionManager : MonoBehaviour
 {
     public static TransactionManager instance;
     
-    [SerializeField]Button p_Button, m_Button;
+    [SerializeField]Button p_Button, m_Button, d_Button;
+    bool dateOrder = true; //true - from lowest to biggest, false - vise versa
+    int prevList = 0;
 
     [SerializeField]TransactionScriptableObject cash;
     [SerializeField]TextMeshProUGUI cashText;
@@ -19,8 +21,7 @@ public class TransactionManager : MonoBehaviour
     GameObject prevTransPrefab;
     Transform prevTransPrefabTrans;
     float prefabOffsetY = 166f;
-
-    public string typeOfSorting = "date";
+    WindowGraph windowGraph;
     
     void Awake(){
         if(instance != null){
@@ -31,43 +32,42 @@ public class TransactionManager : MonoBehaviour
 
         Button p_btn = p_Button.GetComponent<Button>();
         Button m_btn = m_Button.GetComponent<Button>();
+        Button d_btn = d_Button.GetComponent<Button>();
         p_btn.onClick.AddListener(ShowIncome);
         m_btn.onClick.AddListener(ShowSpendings);
+        d_btn.onClick.AddListener(ChangeDateOrder);
         
         m_TransactionsList = new List<TransactionScriptableObject>();
         p_TransactionsList = new List<TransactionScriptableObject>();
+
+        windowGraph = WindowGraph.instance;
 
         prevTransPrefab = new GameObject();
         prevTransPrefabTrans = prevTransPrefab.GetComponent<Transform>();
     }
 
-    void Start(){
-        //cashText.text = cash.summOfTrans.ToString("0.00") + "₴";
-        //prefabOffset = transPrefab.GetComponent<RectTransform>().sizeDelta.y;
-    }
-
-
-    // Update is called once per frame
     void Update(){
         cashText.text = cash.summOfTrans.ToString("0.00") + "₴";
     }
 
     void ShowIncome(){
-        /*if(p_TransactionsList.Count > 0){
-            for(int i = 0; i < transactions.Count; i++){
-                Debug.Log(p_TransactionsList[i].nameOfTrans);
-            }
-        }*/
         GenerateList(p_TransactionsList);
+        prevList = 1;
     }
 
     void ShowSpendings(){
-        /*if(m_TransactionsList.Count > 0){
-            for(int i = 0; i < transactions.Count; i++){
-                Debug.Log(m_TransactionsList[i].nameOfTrans);
-            }
-        }*/
         GenerateList(m_TransactionsList);
+        prevList = -1;
+    }
+
+    void ChangeDateOrder(){
+        dateOrder = !dateOrder;
+        if(prevList == 1){
+            GenerateList(p_TransactionsList);
+        } 
+        else if(prevList == -1){
+            GenerateList(m_TransactionsList);
+        }
     }
 
     //Function called from outside to add a new transaction to a list
@@ -116,6 +116,10 @@ public class TransactionManager : MonoBehaviour
     void GenerateList(List<TransactionScriptableObject> transList){
         DeleteAllChildren(transListObj.transform);
         if(transList.Count != 0){
+            DateSort(transList);
+            List<float> transNumbers = new List<float>();
+            windowGraph.DeleteGraphContainerDots();
+
             for(int i = 0; i < transList.Count; i++){
                 GameObject newTransPrefab = Instantiate(transPrefab);
                 Transform newTransPrefabTrans = newTransPrefab.GetComponent<Transform>();
@@ -148,7 +152,7 @@ public class TransactionManager : MonoBehaviour
                     prevTransPrefabTrans = newTransPrefabTrans;
                 }
 
-
+                transNumbers.Add(transList[i].summOfTrans);
                 /*else if(prevTransPrefabTrans == newTransPrefabTrans){
                     Debug.Log("фівфівфівф New: " + newTransPrefabTrans.position.y + " Prev:" + prevTransPrefabTrans.position.y);
                     string dateText = transList[i].year.ToString()+"."+transList[i].month.ToString()+"."+transList[i].day.ToString();
@@ -158,6 +162,50 @@ public class TransactionManager : MonoBehaviour
                 }*/
                 /*newTransPrefab.Find(DateText).text = transList[i].nameOfTrans;*/
             }
+            windowGraph.ShowGraph(transNumbers);
+        }
+    }
+
+    void DateSort(List<TransactionScriptableObject> transList){
+        TransactionScriptableObject temp = ScriptableObject.CreateInstance<TransactionScriptableObject>();
+        //Year sorting
+        for(int i = 0; i < transList.Count - 1; i++){
+            for(int j = 0; j < transList.Count - i - 1; j++){
+                if (transList[j].year > transList[j + 1].year){
+                    // Swap elements
+                    temp = transList[j];
+                    transList[j] = transList[j + 1];
+                    transList[j + 1] = temp;
+                }
+            }
+        }
+        
+        //Month sorting
+        for(int i = 0; i < transList.Count - 1; i++){
+            for(int j = 0; j < transList.Count - i - 1; j++){
+                if (transList[j].month > transList[j + 1].month && transList[j].year == transList[j + 1].year){
+                    // Swap elements
+                    temp = transList[j];
+                    transList[j] = transList[j + 1];
+                    transList[j + 1] = temp;
+                }
+            }
+        }
+
+        //Day sorting
+        for(int i = 0; i < transList.Count - 1; i++){
+            for(int j = 0; j < transList.Count - i - 1; j++){
+                if (transList[j].day > transList[j + 1].day && transList[j].year == transList[j + 1].year && transList[j].month == transList[j + 1].month){
+                    // Swap elements
+                    temp = transList[j];
+                    transList[j] = transList[j + 1];
+                    transList[j + 1] = temp;
+                }
+            }
+        }
+
+        if(!dateOrder){
+            transList.Reverse();
         }
     }
 
@@ -165,8 +213,7 @@ public class TransactionManager : MonoBehaviour
     void DeleteAllChildren(Transform parent)
     {
         int childCount = parent.childCount;
-        for (int i = childCount - 1; i >= 0; i--)
-        {
+        for (int i = childCount - 1; i >= 0; i--){
             Transform child = parent.GetChild(i);
             Destroy(child.gameObject);
         }
@@ -174,13 +221,5 @@ public class TransactionManager : MonoBehaviour
         prevTransPrefab = new GameObject();
         prevTransPrefabTrans = prevTransPrefab.GetComponent<Transform>();
         prevTransPrefabTrans.SetParent(transListObj.transform);
-    }
-
-    void SortTransactions(string typeOfSorting){
-        switch(typeOfSorting){
-            case "date":
-            transactions = transactions.OrderBy(transactions => transactions.year).ThenBy(TransactionScriptableObject => TransactionScriptableObject.month).ThenBy(TransactionScriptableObject => TransactionScriptableObject.day).ToList();
-            break;
-        }
     }
 }
