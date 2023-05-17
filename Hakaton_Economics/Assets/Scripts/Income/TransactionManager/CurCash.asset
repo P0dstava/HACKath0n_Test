@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nameOfTrans: 
   tagOfTrans: 
-  summOfTrans: 0
+  summOfTrans: 12
   year: 0
   month: 0
   day: 0

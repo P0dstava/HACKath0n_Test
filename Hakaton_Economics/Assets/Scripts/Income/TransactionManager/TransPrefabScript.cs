@@ -6,13 +6,22 @@ using UnityEngine.UI;
 public class TransPrefabScript : MonoBehaviour
 {
     TransactionManager transactionManager;
+    EditTransactionManager editTransactionManager;
     public TransactionScriptableObject curTransaction;
-    [SerializeField]Button m_Button;
+    [SerializeField]Button d_Button, e_Button;
 
     void Awake(){
-        Button btn = m_Button.GetComponent<Button>();
-        btn.onClick.AddListener(DeleteTransaction);
+        Button deleteBtn = d_Button.GetComponent<Button>();
+        Button editBtn = e_Button.GetComponent<Button>();
+        deleteBtn.onClick.AddListener(DeleteTransaction);
+        editBtn.onClick.AddListener(EditTransaction);
+
+        editTransactionManager = EditTransactionManager.instance;
         transactionManager = TransactionManager.instance;
+    }
+
+    void EditTransaction(){
+        editTransactionManager.EditTransaction(curTransaction);
     }
 
     void DeleteTransaction(){

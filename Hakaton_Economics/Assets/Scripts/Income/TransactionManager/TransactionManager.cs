@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 using UnityEngine.UI;
 using TMPro;
 using System.Linq;
@@ -11,7 +12,7 @@ public class TransactionManager : MonoBehaviour
     
     [SerializeField]Button p_Button, m_Button, d_Button;
     bool dateOrder = true; //true - from lowest to biggest, false - vise versa
-    int prevList = 0;
+    int prevList = 1;
 
     [SerializeField]TransactionScriptableObject cash;
     [SerializeField]TextMeshProUGUI cashText;
@@ -21,7 +22,7 @@ public class TransactionManager : MonoBehaviour
     GameObject prevTransPrefab;
     Transform prevTransPrefabTrans;
     float prefabOffsetY = 166f;
-    WindowGraph windowGraph;
+    //WindowGraph windowGraph;
     
     void Awake(){
         if(instance != null){
@@ -40,10 +41,18 @@ public class TransactionManager : MonoBehaviour
         m_TransactionsList = new List<TransactionScriptableObject>();
         p_TransactionsList = new List<TransactionScriptableObject>();
 
-        windowGraph = WindowGraph.instance;
+        //windowGraph = WindowGraph.instance;
 
         prevTransPrefab = new GameObject();
         prevTransPrefabTrans = prevTransPrefab.GetComponent<Transform>();
+
+        LoadScriptableObjects();
+
+        for(int i = 0; i < transactions.Count; i++){
+            AssignTransaction(transactions[i]);
+        }
+
+        GenerateListForDate();
     }
 
     void Update(){
@@ -62,6 +71,10 @@ public class TransactionManager : MonoBehaviour
 
     void ChangeDateOrder(){
         dateOrder = !dateOrder;
+        GenerateListForDate();
+    }
+
+    public void GenerateListForDate(){
         if(prevList == 1){
             GenerateList(p_TransactionsList);
         } 
@@ -74,7 +87,7 @@ public class TransactionManager : MonoBehaviour
     public void AddTransaction(TransactionScriptableObject m_Transaction){
         transactions.Add(m_Transaction);
         AssignTransaction(m_Transaction);
-        ChangeCashAmount(m_Transaction);
+        ChangeCashAmount(m_Transaction.summOfTrans);
     }
     
     //Function called from outside to add a new transaction to a list
@@ -91,13 +104,13 @@ public class TransactionManager : MonoBehaviour
             GenerateList(m_TransactionsList);
         }
 
-        m_Transaction.summOfTrans = -m_Transaction.summOfTrans;
-        ChangeCashAmount(m_Transaction);
+        //m_Transaction.summOfTrans = -m_Transaction.summOfTrans;
+        ChangeCashAmount(-m_Transaction.summOfTrans);
     }
 
     //Adding or substracting a new transaction summ from overall amount of money
-    void ChangeCashAmount(TransactionScriptableObject m_Transaction){
-        cash.summOfTrans += m_Transaction.summOfTrans;
+    void ChangeCashAmount(float m_Transaction){
+        cash.summOfTrans += m_Transaction;
         cashText.text = cash.summOfTrans.ToString("0.00") + "₴";
     }
 
@@ -105,10 +118,12 @@ public class TransactionManager : MonoBehaviour
     void AssignTransaction(TransactionScriptableObject m_Transaction){
         if(m_Transaction.summOfTrans > 0f){
             p_TransactionsList.Add(m_Transaction);
+            prevList = 1;
         }
 
         else if(m_Transaction.summOfTrans < 0f){
             m_TransactionsList.Add(m_Transaction);
+            prevList = -1;
         }
     }
 
@@ -118,7 +133,7 @@ public class TransactionManager : MonoBehaviour
         if(transList.Count != 0){
             DateSort(transList);
             List<float> transNumbers = new List<float>();
-            windowGraph.DeleteGraphContainerDots();
+            //windowGraph.DeleteGraphContainerDots();
 
             for(int i = 0; i < transList.Count; i++){
                 GameObject newTransPrefab = Instantiate(transPrefab);
@@ -162,7 +177,7 @@ public class TransactionManager : MonoBehaviour
                 }*/
                 /*newTransPrefab.Find(DateText).text = transList[i].nameOfTrans;*/
             }
-            windowGraph.ShowGraph(transNumbers);
+            //windowGraph.ShowGraph(transNumbers);
         }
     }
 
@@ -221,5 +236,22 @@ public class TransactionManager : MonoBehaviour
         prevTransPrefab = new GameObject();
         prevTransPrefabTrans = prevTransPrefab.GetComponent<Transform>();
         prevTransPrefabTrans.SetParent(transListObj.transform);
+    }
+
+    private void LoadScriptableObjects()
+    {
+        string folderPath = "Assets/Scripts/Income/ScriptableObjects/";
+        string[] guids = AssetDatabase.FindAssets("t:TransactionScriptableObject", new[] { folderPath });
+
+        for (int i = 0; i < guids.Length; i++)
+        {
+            string assetPath = AssetDatabase.GUIDToAssetPath(guids[i]);
+            TransactionScriptableObject scrObject = AssetDatabase.LoadAssetAtPath<TransactionScriptableObject>(assetPath);
+
+            if (scrObject != null)
+            {
+                transactions.Add(scrObject);
+            }
+        }
     }
 }
