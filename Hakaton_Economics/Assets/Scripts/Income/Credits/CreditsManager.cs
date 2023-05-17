@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,7 +15,8 @@ public class CreditsManager : MonoBehaviour
     [SerializeField] Transform content;
     [SerializeField] TMP_Text sumText;
 
-    private int sum; 
+    private int sum;
+    private List<Credit> _credits;
 
     private void Awake()
     {
@@ -29,6 +31,7 @@ public class CreditsManager : MonoBehaviour
     private void Start()
     {
         sumText.text = sum.ToString();
+        _credits = new List<Credit>();
     }
 
     private void OnEnable()
@@ -39,14 +42,31 @@ public class CreditsManager : MonoBehaviour
 
     public void CreateCredit(string name, int monthlyPay, int months)
     {
-        Instantiate(creditPrefab, content).Init(name, monthlyPay, months);
+        Credit credit = Instantiate(creditPrefab, content);
+        credit.Init(name, monthlyPay, months);
+        _credits.Add(credit);
         sum += monthlyPay;
         sumText.text = sum.ToString();
     }
 
-    private void DeleteCredit(int pay)
+    private void DeleteCredit(Credit credit)
     {
-        sum -= pay;
+        sum -= credit._pay;
         sumText.text = sum.ToString();
+        _credits.Remove(credit);
+    }
+
+    public void SortByPay()
+    {
+        _credits = _credits.OrderBy(obj => obj._pay).Reverse().ToList();
+        for (int i = 0; i < _credits.Count; i++)
+            _credits[i].transform.SetSiblingIndex(i);
+    }
+
+    public void SortByMonths()
+    {
+        _credits = _credits.OrderBy(obj => obj._months).Reverse().ToList();
+        for (int i = 0; i < _credits.Count; i++)
+            _credits[i].transform.SetSiblingIndex(i);
     }
 }

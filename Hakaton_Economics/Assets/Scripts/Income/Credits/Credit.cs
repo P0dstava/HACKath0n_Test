@@ -6,24 +6,26 @@ using TMPro;
 
 public class Credit : MonoBehaviour
 {
-    public static event Action<int> OnDelete;
+    public static event Action<Credit> OnDelete;
 
     [SerializeField] private TMP_Text _name, _payment, _month;
 
-    private int _pay;
+    public int _pay;
+    public int _months;
 
-    public void Init(string name, int payment, int month)
+    public void Init(string name, int payment, int months)
     {
         _name.text = name;
         _payment.text = payment.ToString() + "₴/month";
-        _month.text = month.ToString() + " months left";
+        _month.text = months.ToString() + " months left";
 
         _pay = payment;
+        _months = months;
     }
 
     public void Delete()
     {
-        OnDelete?.Invoke(_pay);
+        OnDelete?.Invoke(this);
         Destroy(gameObject);
     }
 }
