@@ -20,12 +20,16 @@ public class TransPrefabScript : MonoBehaviour
         transactionManager = TransactionManager.instance;
     }
 
+    private void Update()
+    {
+        transform.localScale = Vector3.one;
+    }
+
     void EditTransaction(){
         editTransactionManager.EditTransaction(curTransaction);
     }
 
     void DeleteTransaction(){
-        transform.localScale = Vector3.one;
         GameObject.Destroy(gameObject);
         transactionManager.RemoveTransaction(curTransaction);
         GameObject.DestroyImmediate(curTransaction, true);

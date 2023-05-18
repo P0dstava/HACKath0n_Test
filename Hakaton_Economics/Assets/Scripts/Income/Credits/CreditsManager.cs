@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
@@ -30,7 +30,7 @@ public class CreditsManager : MonoBehaviour
 
     private void Start()
     {
-        sumText.text = sum.ToString();
+        sumText.text = sum.ToString("0.00") + "₴";
         _credits = new List<Credit>();
     }
 
@@ -46,13 +46,13 @@ public class CreditsManager : MonoBehaviour
         credit.Init(name, monthlyPay, months);
         _credits.Add(credit);
         sum += monthlyPay;
-        sumText.text = sum.ToString();
+        sumText.text = sum.ToString("0.00") + "₴";
     }
 
     private void DeleteCredit(Credit credit)
     {
         sum -= credit._pay;
-        sumText.text = sum.ToString();
+        sumText.text = sum.ToString("0.00") + "₴";
         _credits.Remove(credit);
     }
 

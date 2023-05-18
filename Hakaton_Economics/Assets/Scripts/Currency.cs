@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
@@ -19,7 +19,7 @@ public class Currency : MonoBehaviour
     {
         //disabled for API calls economy 
 
-        //StartCoroutine(Get());
+        StartCoroutine(Get());
     }
 
     private IEnumerator Get()
@@ -58,9 +58,9 @@ public class Currency : MonoBehaviour
 
     private void SetCurrency(CurrencyData currency)
     {
-        _usd.text = currency.rates.USD.ToString("f2");
-        _eur.text = currency.rates.EUR.ToString("f2");
-        _usd.text = currency.rates.PLN.ToString("f2");
+        _usd.text = (1f / currency.rates.USD).ToString("0.00") + "₴";
+        _eur.text = (1f / currency.rates.EUR).ToString("0.00") + "₴";
+        _pln.text = (1f / currency.rates.PLN).ToString("0.00") + "₴";
     }
 }
 
