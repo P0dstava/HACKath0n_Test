@@ -16,7 +16,7 @@ public class Credit : MonoBehaviour
     public void Init(string name, int payment, int months)
     {
         _name.text = name;
-        _payment.text = payment.ToString() + "₴/month";
+        _payment.text = payment.ToString() + "₴\n/month";
         _month.text = months.ToString() + " months left";
 
         _pay = payment;

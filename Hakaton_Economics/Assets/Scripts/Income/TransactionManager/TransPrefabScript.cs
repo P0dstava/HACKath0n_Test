@@ -25,6 +25,7 @@ public class TransPrefabScript : MonoBehaviour
     }
 
     void DeleteTransaction(){
+        transform.localScale = Vector3.one;
         GameObject.Destroy(gameObject);
         transactionManager.RemoveTransaction(curTransaction);
         GameObject.DestroyImmediate(curTransaction, true);

@@ -9,11 +9,11 @@ public class ScrollViewScript : MonoBehaviour
 
     private void Start()
     {
-        rectTrans = GetComponent<RectTransform>();
+        //rectTrans = GetComponent<RectTransform>();
     }
 
     private void Update()
     {
-        Debug.Log(rectTrans.sizeDelta.y + " x-" +rectTrans.sizeDelta.x);
+        //Debug.Log(rectTrans.sizeDelta.y + " x-" +rectTrans.sizeDelta.x);
     }
 }
