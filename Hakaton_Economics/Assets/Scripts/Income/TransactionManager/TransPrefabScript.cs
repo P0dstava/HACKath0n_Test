@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.IO;
 
 public class TransPrefabScript : MonoBehaviour
 {
@@ -30,8 +31,14 @@ public class TransPrefabScript : MonoBehaviour
     }
 
     void DeleteTransaction(){
-        GameObject.Destroy(gameObject);
+        string filePath = Application.persistentDataPath + "/" + curTransaction.tagOfTrans +".json";
+        Debug.Log(filePath);
+        if (File.Exists(filePath))
+        {
+            File.Delete(filePath);
+        }
         transactionManager.RemoveTransaction(curTransaction);
         GameObject.DestroyImmediate(curTransaction, true);
+        GameObject.Destroy(gameObject);
     }
 }

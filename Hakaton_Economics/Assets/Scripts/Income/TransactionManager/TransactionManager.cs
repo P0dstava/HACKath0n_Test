@@ -241,8 +241,6 @@ public class TransactionManager : MonoBehaviour
     private void LoadScriptableObjects()
     {
         string dataPath = Application.persistentDataPath + "/";
-        
-        Debug.Log(dataPath);
         // Get all JSON files in the directory
         string[] jsonFiles = Directory.GetFiles(dataPath, "*.json");
 
@@ -251,7 +249,6 @@ public class TransactionManager : MonoBehaviour
         {
             // Read the JSON file contents
             string json = File.ReadAllText(filePath);
-            Debug.Log(json);
 
             // Convert JSON to ScriptableObject
             TransactionScriptableObject myData = ScriptableObject.CreateInstance<TransactionScriptableObject>();
@@ -259,12 +256,6 @@ public class TransactionManager : MonoBehaviour
 
             // Add the ScriptableObject to the list
             transactions.Add(myData);
-        }
-
-        Debug.Log(transactions.Count);
-
-        for(int i = 0; i < transactions.Count; i++){
-            Debug.Log(transactions[i].name);
         }
         /*string folderPath = "Assets/Scripts/Income/ScriptableObjects/";
         string[] guids = AssetDatabase.FindAssets("t:TransactionScriptableObject", new[] { folderPath });

@@ -59,13 +59,10 @@ public class CreateTransactoinBtn : MonoBehaviour
 
         // Serialize the instantiated ScriptableObject to JSON
         string json = JsonUtility.ToJson(transaction);
-
-        Debug.Log(json);
         // Save the JSON string to a file with the custom name
+        transaction.tagOfTrans = fileName;
         string filePath = Application.persistentDataPath + "/" + fileName +".json";
         System.IO.File.WriteAllText(filePath, json);
-
-        Debug.Log("ScriptableObject saved as JSON: " + filePath);
     }
 
     string GenerateRandomString(int length)
