@@ -256,6 +256,7 @@ public class TransactionManager : MonoBehaviour
 
             // Add the ScriptableObject to the list
             transactions.Add(myData);
+            //cash.summOfTrans += myData.summOfTrans;
         }
         /*string folderPath = "Assets/Scripts/Income/ScriptableObjects/";
         string[] guids = AssetDatabase.FindAssets("t:TransactionScriptableObject", new[] { folderPath });

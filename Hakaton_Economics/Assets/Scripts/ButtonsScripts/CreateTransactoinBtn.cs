@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Globalization;
+using System;
 
 public class CreateTransactoinBtn : MonoBehaviour
 {
@@ -31,6 +32,7 @@ public class CreateTransactoinBtn : MonoBehaviour
     void Awake(){
         Button btn = m_Button.GetComponent<Button>();
         btn.onClick.AddListener(OnClick);
+        SetCurrentTime();
     }
 
     void Start(){
@@ -54,6 +56,14 @@ public class CreateTransactoinBtn : MonoBehaviour
         }
     }
 
+    void SetCurrentTime(){
+        yearField.text = DateTime.Now.Year.ToString();
+        monthField.text = DateTime.Now.Month.ToString();
+        dayField.text = DateTime.Now.Day.ToString();
+        hourField.text = DateTime.Now.Hour.ToString();
+        minuteField.text = DateTime.Now.Minute.ToString();
+    }
+
     void SaveScriptableObjectAsJSON(TransactionScriptableObject transaction, string fileName)
     {
 
@@ -61,6 +71,7 @@ public class CreateTransactoinBtn : MonoBehaviour
         string json = JsonUtility.ToJson(transaction);
         // Save the JSON string to a file with the custom name
         transaction.tagOfTrans = fileName;
+        Debug.Log(transaction.tagOfTrans);
         string filePath = Application.persistentDataPath + "/" + fileName +".json";
         System.IO.File.WriteAllText(filePath, json);
     }
