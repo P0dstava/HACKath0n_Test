@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 [CreateAssetMenu(fileName = "New Transaction", menuName = "Transactions/New Transaction")]
 public class TransactionScriptableObject : ScriptableObject
 {

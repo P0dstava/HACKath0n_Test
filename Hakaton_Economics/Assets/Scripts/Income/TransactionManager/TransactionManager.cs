@@ -1,10 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
 using UnityEngine.UI;
 using TMPro;
 using System.Linq;
+using System.IO;
 
 public class TransactionManager : MonoBehaviour
 {
@@ -240,7 +240,33 @@ public class TransactionManager : MonoBehaviour
 
     private void LoadScriptableObjects()
     {
-        string folderPath = "Assets/Scripts/Income/ScriptableObjects/";
+        string dataPath = Application.persistentDataPath + "/";
+        
+        Debug.Log(dataPath);
+        // Get all JSON files in the directory
+        string[] jsonFiles = Directory.GetFiles(dataPath, "*.json");
+
+        // Process the list of JSON files
+        foreach (string filePath in jsonFiles)
+        {
+            // Read the JSON file contents
+            string json = File.ReadAllText(filePath);
+            Debug.Log(json);
+
+            // Convert JSON to ScriptableObject
+            TransactionScriptableObject myData = ScriptableObject.CreateInstance<TransactionScriptableObject>();
+            JsonUtility.FromJsonOverwrite(json, myData);
+
+            // Add the ScriptableObject to the list
+            transactions.Add(myData);
+        }
+
+        Debug.Log(transactions.Count);
+
+        for(int i = 0; i < transactions.Count; i++){
+            Debug.Log(transactions[i].name);
+        }
+        /*string folderPath = "Assets/Scripts/Income/ScriptableObjects/";
         string[] guids = AssetDatabase.FindAssets("t:TransactionScriptableObject", new[] { folderPath });
 
         for (int i = 0; i < guids.Length; i++)
@@ -252,6 +278,6 @@ public class TransactionManager : MonoBehaviour
             {
                 transactions.Add(scrObject);
             }
-        }
+        }*/
     }
 }

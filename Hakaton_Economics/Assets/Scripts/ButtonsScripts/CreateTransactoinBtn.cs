@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEditor;
 using TMPro;
 using System.Globalization;
 
@@ -48,10 +47,25 @@ public class CreateTransactoinBtn : MonoBehaviour
             fileName = GenerateRandomString(8);
             RegenerateIfMatch(fileName);
 
-            AssetDatabase.CreateAsset(trnsSO, "Assets/Scripts/Income/ScriptableObjects/"+fileName+".asset");
+            SaveScriptableObjectAsJSON(trnsSO, fileName);
+            /*AssetDatabase.CreateAsset(trnsSO, "Assets/Scripts/Income/ScriptableObjects/"+fileName+".asset");
             AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
+            AssetDatabase.Refresh();*/
         }
+    }
+
+    void SaveScriptableObjectAsJSON(TransactionScriptableObject transaction, string fileName)
+    {
+
+        // Serialize the instantiated ScriptableObject to JSON
+        string json = JsonUtility.ToJson(transaction);
+
+        Debug.Log(json);
+        // Save the JSON string to a file with the custom name
+        string filePath = Application.persistentDataPath + "/" + fileName +".json";
+        System.IO.File.WriteAllText(filePath, json);
+
+        Debug.Log("ScriptableObject saved as JSON: " + filePath);
     }
 
     string GenerateRandomString(int length)
