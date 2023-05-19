@@ -2556,10 +2556,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Credits
       objectReference: {fileID: 0}
-    - target: {fileID: 5243759603804626980, guid: 8cc64a3ff4809334f8c12a02530e381d, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 5243759603804626981, guid: 8cc64a3ff4809334f8c12a02530e381d, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -2646,7 +2642,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5243759604927330236, guid: 8cc64a3ff4809334f8c12a02530e381d, type: 3}
       propertyPath: m_SizeDelta.x
-      value: -600
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8cc64a3ff4809334f8c12a02530e381d, type: 3}
@@ -15009,7 +15005,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1963131292
 RectTransform:
   m_ObjectHideFlags: 0
