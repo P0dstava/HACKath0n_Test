@@ -27,8 +27,6 @@ ExportedObj/
 sysinfo.txt
 # ProjectVersion.txt
 
-# Builds
-*.apk
 # *.unitypackage
 
 .vs/
